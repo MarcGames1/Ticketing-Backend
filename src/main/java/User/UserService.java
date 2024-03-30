@@ -1,5 +1,6 @@
-package com.example.demo;
+package User;
 
+import Entitys.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

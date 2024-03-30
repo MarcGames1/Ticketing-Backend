@@ -1,5 +1,6 @@
-package com.example.demo;
+package User;
 
+import Entitys.User;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
