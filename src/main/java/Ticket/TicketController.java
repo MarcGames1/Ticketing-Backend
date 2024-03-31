@@ -19,6 +19,7 @@ public class TicketController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response crateTicket (Ticket ticket){
-
+    ticketService.createTicket(ticket);
+    return Response.status((Response.Status.CREATED)).build();
     }
 }
