@@ -1,5 +1,6 @@
 package Entitys;
 
+import Enums.EmployeeRole;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,18 +10,79 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "firstName")
+    private String firstName;
+
+    @Column(name = "lastName")
+    private String lastName;
 
     @Column(name = "email")
     private String email;
 
-    public User(){}
+    @Column (name= "password")
+    private String password;
+    @Column (name = "departmentId")
+    private String departmentId;
 
-    public User(Long id, String username, String email) {
+    @Column (name = "role")
+    private EmployeeRole role;
+
+    protected User () {}
+
+
+
+    public User(Long id, String firstName, String lastName , String email, String password, String departmentId, EmployeeRole role) {
         this.id = id;
-        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
+        this.password = password; // TODO Hash password
+        this.departmentId = departmentId;
+        this.role = role;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    private String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
+    private boolean isCorrectPassword (String inputPassword) {
+//        TODO Method that compares the inputPassword to the Hashed Password in DB and
+        // returns a bool
+        return true;
+    }
+
+    public String getDepartmentId() {
+        return departmentId;
+    }
+    public void setDepartmentId(String departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public EmployeeRole getRole() {
+        return role;
+    }
+    public void setRole(EmployeeRole role) {
+        this.role = role;
     }
 
     public Long getId() {
@@ -31,13 +93,9 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
-    }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+
+
 
     public String getEmail() {
         return email;
