@@ -10,10 +10,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "firstName")
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "lastName")
+    @Column(name = "last_name")
     private String lastName;
 
     @Column(name = "email")
@@ -21,8 +21,11 @@ public class User {
 
     @Column (name= "password")
     private String password;
-    @Column (name = "departmentId")
-    private String departmentId;
+
+//    TODO
+//    @ManyToOne(optional=false)
+//    @JoinColumn (name = "department_id")
+//    private Long departmentId;
 
     @Column (name = "role")
     private EmployeeRole role;
