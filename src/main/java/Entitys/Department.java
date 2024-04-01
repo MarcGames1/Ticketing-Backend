@@ -1,10 +1,11 @@
 package Entitys;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+import java.util.List;
+
+@Entity
+@Table(name = "departments")
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,10 +14,14 @@ public class Department {
     @Column(name = "name")
     private String name;
 
-
+    @OneToMany(mappedBy = "department")
+    private List<User> users;
     public Department(Long id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public Department() {
     }
 
     public String getName() {
@@ -29,6 +34,6 @@ public class Department {
     }
 
 
-
+// TODO methods for users
 
 }

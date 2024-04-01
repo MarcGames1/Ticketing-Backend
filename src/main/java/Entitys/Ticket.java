@@ -1,6 +1,8 @@
 package Entitys;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "tickets")
 public class Ticket {
@@ -8,16 +10,17 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     private User createdBy;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_to")
     private User assignedTo;
 
-    @Column(name = "attach_id")
-    private Long attachId;
+    @OneToOne // One task can have only one attachment
+    @JoinColumn(name = "attach_id")
+    private Attachment attachment;
 
     @Column(name = "title")
     private String title;
@@ -25,15 +28,17 @@ public class Ticket {
     @Column(name = "content")
     private String content;
 
+    @OneToMany(mappedBy = "ticket")
+    private List<Task> tasks;
     @Column(name = "status")
     private String status;
 
     public Ticket() {}
 
-    public Ticket(User createdBy, User assignedTo, Long attachId, String title, String content, String status) {
+    public Ticket(User createdBy, User assignedTo, Attachment attachment, String title, String content, String status) {
         this.createdBy = createdBy;
         this.assignedTo = assignedTo;
-        this.attachId = attachId;
+        this.attachment = attachment;
         this.title = title;
         this.content = content;
         this.status = status;
@@ -64,12 +69,13 @@ public class Ticket {
         this.assignedTo = assignedTo;
     }
 
-    public Long getAttachId() {
-        return attachId;
+    public Attachment getAttachId() {
+        return attachment;
     }
 
-    public void setAttachId(Long attachId) {
-        this.attachId = attachId;
+    public void setAttachment(Attachment attachment) {
+        // todo remove previous attachment from s3bucket
+        this.attachment = attachment;
     }
 
     public String getTitle() {
@@ -95,4 +101,6 @@ public class Ticket {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    // TODO Tasks Methods
 }

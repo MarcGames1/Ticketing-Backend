@@ -1,7 +1,7 @@
 package Enums;
 
 public enum EmployeeRole {
-    MANAGER,
-    EMPLOYEE,
-    SUPERVISOR
+    MANAGER,  // big BO$$
+    EMPLOYEE, // WORKER / poor people
+    SUPERVISOR // little boss
 }

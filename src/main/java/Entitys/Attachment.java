@@ -1,10 +1,9 @@
 package Entitys;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "attachments")
 public class Attachment {
 //    TODO Attachment with url and id from s3bucket
 @Id
@@ -17,6 +16,31 @@ private Long id;
     @Column(name = "S3bucketId")
     private String s3Id;
 
+    @OneToOne(mappedBy = "attachment") // This establishes the relationship with Task
+    private Task task;
+
+
     // Added s3bucket ID instead of name
     // TODO add name field if you think is necesary
+
+
+    public String getUrl() {
+        return url;
+    }
+
+    private void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getS3Id() {
+        return s3Id;
+    }
+
+    public void setS3Id(String s3Id) {
+        this.s3Id = s3Id;
+    }
+
+    public static void delete (Attachment attachment) {
+        // TODO attachment.s3Id  delete
+    }
 }

@@ -22,10 +22,11 @@ public class User {
     @Column (name= "password")
     private String password;
 
-//    TODO
-//    @ManyToOne(optional=false)
-//    @JoinColumn (name = "department_id")
-//    private Long departmentId;
+//    TODO DEFINE RELATIONSHIP WITH DEPARTMENT
+//    @OneToMany( mappedBy="department")
+//
+    @JoinColumn (name = "department_id", nullable = true)
+    private Long departmentId;
 
     @Column (name = "role")
     private EmployeeRole role;
@@ -34,7 +35,7 @@ public class User {
 
 
 
-    public User(Long id, String firstName, String lastName , String email, String password, String departmentId, EmployeeRole role) {
+    public User(Long id, String firstName, String lastName , String email, String password, Long departmentId, EmployeeRole role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -74,10 +75,10 @@ public class User {
         return true;
     }
 
-    public String getDepartmentId() {
+    public Long getDepartmentId() {
         return departmentId;
     }
-    public void setDepartmentId(String departmentId) {
+    public void setDepartmentId(Long departmentId) {
         this.departmentId = departmentId;
     }
 
