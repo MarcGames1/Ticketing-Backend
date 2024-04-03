@@ -11,15 +11,15 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Many tasks can belong to one user
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "task_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Many tasks can be associated with one ticket
-    @JoinColumn(name = "ticket_id") // join column is in table for Order
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
-    @Column (name= "status")
+    @Enumerated(EnumType.ORDINAL)
     private TaskStatus status;
 
     @Column (name = "title")
@@ -28,7 +28,7 @@ public class Task {
     @Column (name = "description")
     private String description;
 
-    @Column (name ="Tracking_id")
+    @Column (name ="tracking_id")
     private String trackingId;
 
 

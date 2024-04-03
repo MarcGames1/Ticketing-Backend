@@ -16,9 +16,6 @@ private Long id;
     @Column(name = "S3bucketId")
     private String s3Id;
 
-    @OneToOne(mappedBy = "attachment") // This establishes the relationship with Task
-    private Task task;
-
 
     // Added s3bucket ID instead of name
     // TODO add name field if you think is necesary

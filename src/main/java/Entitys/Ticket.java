@@ -11,15 +11,15 @@ public class Ticket {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by")
+    @JoinColumn(name = "created_by_id")
     private User createdBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assigned_to")
+    @JoinColumn(name = "assigned_to_id")
     private User assignedTo;
 
-    @OneToOne // One task can have only one attachment
-    @JoinColumn(name = "attach_id")
+    @OneToOne
+    @JoinColumn(name = "attachment_id")
     private Attachment attachment;
 
     @Column(name = "title")

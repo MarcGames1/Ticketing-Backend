@@ -1,6 +1,7 @@
 package User;
 
 import Entitys.User;
+import User.DTO.CreateUserDTO;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -15,9 +16,11 @@ public class UserController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createUser(User user) {
-        userService.createUser(user);
-        return Response.status(Response.Status.CREATED).build();
+    public Response createUser(CreateUserDTO user) {
+        var userId = userService.createUser(user);
+        return Response.status(Response.Status.CREATED)
+                .entity(userId)
+                .build();
     }
 
     @GET

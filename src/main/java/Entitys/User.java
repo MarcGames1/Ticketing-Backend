@@ -22,26 +22,21 @@ public class User {
     @Column (name= "password")
     private String password;
 
-//    TODO DEFINE RELATIONSHIP WITH DEPARTMENT
-//    @OneToMany( mappedBy="department")
-//
-    @JoinColumn (name = "department_id", nullable = true)
-    private Long departmentId;
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
 
-    @Column (name = "role")
+    @Enumerated(EnumType.ORDINAL)
     private EmployeeRole role;
 
     protected User () {}
 
-
-
-    public User(Long id, String firstName, String lastName , String email, String password, Long departmentId, EmployeeRole role) {
+    public User(Long id, String firstName, String lastName , String email, String password, EmployeeRole role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password; // TODO Hash password
-        this.departmentId = departmentId;
         this.role = role;
     }
 
@@ -75,13 +70,6 @@ public class User {
         return true;
     }
 
-    public Long getDepartmentId() {
-        return departmentId;
-    }
-    public void setDepartmentId(Long departmentId) {
-        this.departmentId = departmentId;
-    }
-
     public EmployeeRole getRole() {
         return role;
     }
@@ -97,16 +85,20 @@ public class User {
         this.id = id;
     }
 
-
-
-
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 }
 
