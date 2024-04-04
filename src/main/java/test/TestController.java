@@ -13,8 +13,15 @@ import jakarta.ws.rs.core.Response;
 @RequestScoped
 public class TestController {
     @GET
-    public  String getTestResponse() {
-        Dotenv dotenv = Dotenv.load();
-        return dotenv.get("TEST_VARIABLE");
+    public  Response  getTestResponse() {
+        try{
+            Dotenv dotenv = Dotenv.load();
+            String testVariable = dotenv.get("TEST_VARIABLE");
+            return Response.ok(testVariable).build();
+        } catch (Exception e){
+        e.printStackTrace();
+
+        return Response.serverError().build();
     }
+}
 }
