@@ -35,4 +35,7 @@
 - Title => String
 - Content => String
 - Status - ENUM {**new**, **assigned**, **started**, **in progress**, **checked**, **DONE** }
-- 
+
+
+ ### TODO
+ 1. Setup AWS SDK for Java 2.x ( https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/setup.html)
