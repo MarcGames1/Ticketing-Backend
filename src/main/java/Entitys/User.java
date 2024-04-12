@@ -16,7 +16,7 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "email",unique = true)
     private String email;
 
     @Column (name= "password")
@@ -95,6 +95,10 @@ public class User {
 
     public Department getDepartment() {
         return department;
+    }
+    public Long getDepartmentId(){
+        if(department == null) return null;
+        return department.getId();
     }
 
     public void setDepartment(Department department) {

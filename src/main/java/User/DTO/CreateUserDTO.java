@@ -1,11 +1,19 @@
 package User.DTO;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+
 public class CreateUserDTO {
+    @NotEmpty
     private String firstName;
+    @NotEmpty
     private String lastName;
+    @Email
     private String identifier;
+    @NotEmpty
     private String password;
     private Long departmentId;
+    @NotEmpty
     private String role;
 
     public CreateUserDTO() {

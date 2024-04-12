@@ -1,8 +1,7 @@
-package User;
-
-import Entitys.User;
-import User.DTO.CreateUserDTO;
-import User.DTO.UpdateUserDTO;
+package Department;
+import Department.DTO.CreateDepartmentDTO;
+import Department.DTO.UpdateDepartmentDTO;
+import Entitys.Department;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -12,21 +11,21 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
-@Path("/users")
+@Path("/departments")
 @RequestScoped
-public class UserController {
+public class DepartmentController {
     @Inject
-    private UserService service;
+    private DepartmentService service;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> getAll(@QueryParam("departmentId") Long departmentId){
-        return service.getAll(departmentId);
+    public List<Department> getAll(){
+        return service.getAll();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(@Valid CreateUserDTO dto) {
+    public Response create(@Valid CreateDepartmentDTO dto) {
         var id = service.create(dto);
         return Response.status(Response.Status.CREATED)
                 .entity(id)
@@ -35,12 +34,12 @@ public class UserController {
 
     @GET
     @Path("/{id}")
-    public User getById(@PathParam("id") Long id) {
+    public Department getById(@PathParam("id") Long id) {
         return service.getById(id);
     }
 
     @PATCH
-    public Response update(@Valid UpdateUserDTO dto){
+    public Response update(@Valid UpdateDepartmentDTO dto){
         service.update(dto);
         return Response.ok().build();
     }
@@ -52,3 +51,4 @@ public class UserController {
         return Response.ok(deletedCount).build();
     }
 }
+
