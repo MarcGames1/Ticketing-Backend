@@ -1,6 +1,6 @@
 package Mapper;
 
-import Entitys.User;
+import Entities.User;
 import User.DTO.CreateUserDTO;
 import User.DTO.UpdateUserDTO;
 import org.mapstruct.Mapper;

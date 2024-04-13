@@ -1,8 +1,8 @@
 package User;
 
-import Entitys.Department;
-import Entitys.QUser;
-import Entitys.User;
+import Entities.Department;
+import Entities.QUser;
+import Entities.User;
 import User.DTO.CreateUserDTO;
 import Mapper.UserMapper;
 import User.DTO.UpdateUserDTO;

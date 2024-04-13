@@ -1,4 +1,4 @@
-package Entitys;
+package Entities;
 
 import jakarta.persistence.*;
 
@@ -15,6 +15,14 @@ private Long id;
 
     @Column(name = "S3bucketId")
     private String s3Id;
+
+    @ManyToOne
+    @JoinColumn(name = "ticket_id")
+    private Ticket ticket;
+
+    @ManyToOne
+    @JoinColumn(name = "task_id")
+    private Task task;
 
 
     // Added s3bucket ID instead of name

@@ -1,5 +1,5 @@
 package Ticket;
-import Entitys.Ticket;
+import Entities.Ticket;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;

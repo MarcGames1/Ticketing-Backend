@@ -1,6 +1,6 @@
 package User;
 
-import Entitys.User;
+import Entities.User;
 import User.DTO.CreateUserDTO;
 import User.DTO.UpdateUserDTO;
 import jakarta.enterprise.context.RequestScoped;

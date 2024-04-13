@@ -2,7 +2,7 @@ package Mapper;
 
 import Department.DTO.CreateDepartmentDTO;
 import Department.DTO.UpdateDepartmentDTO;
-import Entitys.Department;
+import Entities.Department;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;

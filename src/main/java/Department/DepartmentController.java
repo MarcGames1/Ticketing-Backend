@@ -1,7 +1,7 @@
 package Department;
 import Department.DTO.CreateDepartmentDTO;
 import Department.DTO.UpdateDepartmentDTO;
-import Entitys.Department;
+import Entities.Department;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;

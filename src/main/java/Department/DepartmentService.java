@@ -2,9 +2,9 @@ package Department;
 
 import Department.DTO.CreateDepartmentDTO;
 import Department.DTO.UpdateDepartmentDTO;
-import Entitys.Department;
-import Entitys.QDepartment;
-import Entitys.QUser;
+import Entities.Department;
+import Entities.QDepartment;
+import Entities.QUser;
 import Mapper.DepartmentMapper;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
