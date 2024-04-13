@@ -70,6 +70,10 @@ public class Task {
     public User getUser() {
         return user;
     }
+    public Long getUserId(){
+        if(user == null) return null;
+        return user.getId();
+    }
 
     public void setUser(User user) {
         this.user = user;

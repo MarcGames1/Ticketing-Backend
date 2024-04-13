@@ -1,7 +1,7 @@
-package Ticket;
-import Entities.Ticket;
-import Ticket.DTO.CreateTicketDTO;
-import Ticket.DTO.UpdateTicketDTO;
+package Task;
+import Entities.Task;
+import Task.DTO.CreateTaskDTO;
+import Task.DTO.UpdateTaskDTO;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -14,19 +14,19 @@ import java.util.List;
 
 @Path("/tickets")
 @RequestScoped
-public class TicketController {
+public class TaskController {
     @Inject
-    private TicketService service;
+    private TaskService service;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Ticket> getAll(){
-        return service.getAll();
+    public List<Task> getAll(@QueryParam("userId") Long userId, @QueryParam("ticketId") Long ticketId){
+        return service.getAll(ticketId, userId);
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(@Valid CreateTicketDTO dto) {
+    public Response create(@Valid CreateTaskDTO dto) {
         var id = service.create(dto);
         return Response.status(Response.Status.CREATED)
                 .entity(id)
@@ -35,12 +35,12 @@ public class TicketController {
 
     @GET
     @Path("/{id}")
-    public Ticket getById(@PathParam("id") Long id) {
+    public Task getById(@PathParam("id") Long id) {
         return service.getById(id);
     }
 
     @PATCH
-    public Response update(@Valid UpdateTicketDTO dto){
+    public Response update(@Valid UpdateTaskDTO dto){
         service.update(dto);
         return Response.ok().build();
     }
