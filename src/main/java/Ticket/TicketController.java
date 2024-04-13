@@ -1,6 +1,6 @@
 package Ticket;
-import Entities.Ticket;
 import Ticket.DTO.CreateTicketDTO;
+import Ticket.DTO.TicketDTO;
 import Ticket.DTO.UpdateTicketDTO;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -20,7 +20,7 @@ public class TicketController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Ticket> getAll(){
+    public List<TicketDTO> getAll(){
         return service.getAll();
     }
 
@@ -35,7 +35,7 @@ public class TicketController {
 
     @GET
     @Path("/{id}")
-    public Ticket getById(@PathParam("id") Long id) {
+    public TicketDTO getById(@PathParam("id") Long id) {
         return service.getById(id);
     }
 

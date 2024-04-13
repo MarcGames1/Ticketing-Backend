@@ -3,6 +3,7 @@ import Entities.*;
 
 import Mapper.TicketMapper;
 import Ticket.DTO.CreateTicketDTO;
+import Ticket.DTO.TicketDTO;
 import Ticket.DTO.UpdateTicketDTO;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -27,26 +28,29 @@ public class TicketService {
         return model.getId();
     }
 
-    public Ticket getById(Long id) {
+    public TicketDTO getById(Long id) {
         QTicket ticket = QTicket.ticket;
+        QAttachment attachment = QAttachment.attachment;
+        QTask task = QTask.task;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
         var model = query.select(ticket)
                 .from(ticket)
-                .join(ticket.attachments)
-                .join(ticket.tasks)
+                .leftJoin(ticket.attachments, attachment)
+                .leftJoin(ticket.tasks, task)
                 .where(ticket.id.eq(id))
                 .fetchOne();
         if(model == null)
             throw  new NotFoundException("Ticket not found");
-        return model;
+        return TicketMapper.INSTANCE.get(model);
     }
 
-    public List<Ticket> getAll(){
+    public List<TicketDTO> getAll(){
         QTicket ticket = QTicket.ticket;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
-        return query.select(ticket)
+        var result = query.select(ticket)
                 .from(ticket)
                 .fetch();
+        return TicketMapper.INSTANCE.getAll(result);
     }
 
     public void update(UpdateTicketDTO dto) {

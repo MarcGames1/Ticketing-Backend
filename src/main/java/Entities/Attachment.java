@@ -2,9 +2,11 @@ package Entities;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "attachments")
-public class Attachment {
+public class Attachment implements Serializable {
 //    TODO Attachment with url and id from s3bucket
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)

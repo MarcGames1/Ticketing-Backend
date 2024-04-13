@@ -30,11 +30,13 @@ public class UserService {
     }
 
     public Long create(CreateUserDTO dto) {
-        Department department = entityManager.find(Department.class, dto.getDepartmentId());
-        if(department == null)
-            throw new NotFoundException("Department not found");
         User user = UserMapper.INSTANCE.create(dto);
-        user.setDepartment(department);
+        if(dto.getDepartmentId() != null){
+            Department department = entityManager.find(Department.class, dto.getDepartmentId());
+            if(department == null)
+                throw new NotFoundException("Department not found");
+            user.setDepartment(department);
+        }
         entityManager.persist(user);
         return user.getId();
     }

@@ -1,6 +1,7 @@
 package Task;
 import Entities.Task;
 import Task.DTO.CreateTaskDTO;
+import Task.DTO.TaskDTO;
 import Task.DTO.UpdateTaskDTO;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -12,7 +13,7 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 
-@Path("/tickets")
+@Path("/tasks")
 @RequestScoped
 public class TaskController {
     @Inject
@@ -20,7 +21,7 @@ public class TaskController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Task> getAll(@QueryParam("userId") Long userId, @QueryParam("ticketId") Long ticketId){
+    public List<TaskDTO> getAll(@QueryParam("userId") Long userId, @QueryParam("ticketId") Long ticketId){
         return service.getAll(ticketId, userId);
     }
 
@@ -35,7 +36,7 @@ public class TaskController {
 
     @GET
     @Path("/{id}")
-    public Task getById(@PathParam("id") Long id) {
+    public TaskDTO getById(@PathParam("id") Long id) {
         return service.getById(id);
     }
 

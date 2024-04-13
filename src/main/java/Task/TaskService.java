@@ -4,6 +4,7 @@ import Entities.*;
 import Enums.TaskStatus;
 import Mapper.TaskMapper;
 import Task.DTO.CreateTaskDTO;
+import Task.DTO.TaskDTO;
 import Task.DTO.UpdateTaskDTO;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -39,24 +40,27 @@ public class TaskService {
         return model.getId();
     }
 
-    public Task getById(Long id) {
+    public TaskDTO getById(Long id) {
         QTask task = QTask.task;
+        QTicket ticket = QTicket.ticket;
+        QAttachment attachment = QAttachment.attachment;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
         var model = query.select(task)
                 .from(task)
-                .join(task.attachments)
-                .join(task.ticket)
+                .join(task.attachments, attachment)
+                .join(task.ticket, ticket)
                 .where(task.id.eq(id))
                 .fetchOne();
         if(model == null)
             throw  new NotFoundException("Task not found");
-        return model;
+        return TaskMapper.INSTANCE.get(model);
     }
 
-    public List<Task> getAll(Long ticketId, Long userId){
+    public List<TaskDTO> getAll(Long ticketId, Long userId){
         QTask task = QTask.task;
+        QTicket ticket = QTicket.ticket;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
-        return query.select(task)
+        var result = query.select(task)
                 .from(task)
                 .where(Optional.ofNullable(ticketId)
                         .map(task.ticket.id::eq)
@@ -64,8 +68,9 @@ public class TaskService {
                 .where(Optional.ofNullable(userId)
                         .map(task.user.id::eq)
                         .orElse(null))
-                .join(task.ticket)
+                .join(task.ticket, ticket)
                 .fetch();
+        return TaskMapper.INSTANCE.getAll(result);
     }
 
     public void update(UpdateTaskDTO dto) {

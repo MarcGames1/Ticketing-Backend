@@ -1,15 +1,17 @@
 package Entities;
 
 import Enums.TaskStatus;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
 @Entity
 @Table(name = "tasks")
-public class Task {
+public class Task implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,9 +40,11 @@ public class Task {
     @OneToMany(mappedBy = "task",fetch = FetchType.LAZY)
     private List<Attachment> attachments;
 
-    public Task(){}
+    public Task(){
+        this.trackingId = generateTrackingID();
+    }
 
-    public Task(Long id, User user, Ticket ticket, List<Attachment> attachments,TaskStatus status, String title, String description, String trackingId) {
+    public Task(Long id, User user, Ticket ticket, List<Attachment> attachments,TaskStatus status, String title, String description) {
         this.id = id;
         this.user = user;
         this.ticket = ticket;
@@ -48,7 +52,7 @@ public class Task {
         this.title = title;
         this.attachments = attachments;
         this.description = description;
-        this.trackingId = trackingId;
+        this.trackingId = generateTrackingID();
     }
 
     public List<Attachment> getAttachments() {
@@ -115,8 +119,8 @@ public class Task {
         return trackingId;
     }
 
-    public void setTrackingId() {
-        this.trackingId = generateTrackingID();
+    public void setTrackingId(String trackingId) {
+        this.trackingId = trackingId;
     }
 
     private static String generateTrackingID() {
