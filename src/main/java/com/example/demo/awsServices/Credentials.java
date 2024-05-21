@@ -15,6 +15,8 @@ public class Credentials {
         this.region = dotenv.get("AWS_REGION", "eu-west-1");
         this.email = dotenv.get("AWS_EMAIL", "example@aws.com");
         this.bucketName = dotenv.get("AWS_BUCKET_NAME", "s3BucketName");
+
+        // TODO add more AWS credentials as necessary with getter methods
     }
 
     // singleton
@@ -29,7 +31,7 @@ public class Credentials {
         return this.region;
     }
 
-    public String getEmail() {
+    public String getSenderEmail() {
         return this.email;
     }
 
