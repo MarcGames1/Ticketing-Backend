@@ -35,6 +35,7 @@ public class DepartmentService {
     }
 
     public Department getById(Long id) {
+//        What is QDepartment?
         QDepartment department = QDepartment.department;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
         var model = query.select(department)
