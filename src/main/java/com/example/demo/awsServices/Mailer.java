@@ -1,17 +1,51 @@
 package com.example.demo.awsServices;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
-import java.util.Properties;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+
+import java.util.logging.Logger;
+
+
+@ApplicationScoped
 public class Mailer {
 
-    private AmazonSimpleEmailService sesClient;
+    private static Mailer instance;
 
-    public Mailer() {
-        sesClient = AmazonSimpleEmailServiceClientBuilder.standard()
-                .withRegion("eu-west-1") // Choose corect region from AWS
-                .build();
+    private AmazonSimpleEmailService sesClient;
+    private static final Logger LOGGER = Logger.getLogger(Mailer.class.getName());
+    @Inject
+    private Credentials creds;
+
+
+    public Mailer() {}
+
+
+    @PostConstruct
+    private void init() {
+        LOGGER.info("Initializing SES Client");
+        try {
+            BasicAWSCredentials awsCreds = new BasicAWSCredentials(creds.getAWSAccessKeyId(), creds.getAWSSecretKey());
+            sesClient = AmazonSimpleEmailServiceClientBuilder.standard()
+                    .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+                    .withRegion(creds.getRegion())
+                    .build();
+            LOGGER.info("SES Client initialized successfully");
+        } catch (Exception e) {
+            LOGGER.severe("Failed to initialize SES Client: " + e.getMessage());
+        }
+    }
+    public static synchronized Mailer getInstance() {
+        if (instance == null) {
+            instance = new Mailer();
+        }
+        return instance;
     }
 
     // Status change email method
@@ -49,13 +83,25 @@ public class Mailer {
                                             .withCharset("UTF-8").withData(body)))
                             .withSubject(new Content()
                                     .withCharset("UTF-8").withData(subject)))
-                    .withSource("your-email@example.com"); // SES EMAIL
+                    .withSource(creds.getSenderEmail()); // SES EMAIL
 
             sesClient.sendEmail(request);
+            LOGGER.info("Email sent to " + to);
             System.out.println("Email sent to " + to);
         } catch (Exception ex) {
-            System.out.println("The email was not sent. Error message: " + ex.getMessage());
+            LOGGER.severe("The email was not sent. Error message: " + ex.getMessage());
         }
+    }
+
+    public void sendTestEmail(){
+        try{
+
+            this.sendEmail("javademo45@gmail.com", "TEST", "HELLO!!!!");
+        } catch (Error e) {
+            LOGGER.severe("The email was not sent. Error message: ");
+            throw new Error("PLM");
+        }
+
     }
 }
 
