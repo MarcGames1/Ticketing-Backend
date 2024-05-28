@@ -17,9 +17,9 @@ public class Credentials {
     public Credentials() {
         // Load variables from .env
         Dotenv dotenv = Dotenv.load();
-        this.region = dotenv.get("AWS_REGION", "eu-west-3");
-        this.email = dotenv.get("AWS_EMAIL", "javademo293@gmail.com");
-        this.bucketName = dotenv.get("AWS_BUCKET_NAME", "s3BucketName");
+        this.region = dotenv.get("AWS_REGION");
+        this.email = dotenv.get("AWS_EMAIL");
+        this.bucketName = dotenv.get("AWS_BUCKET_NAME");
         this.AWS_ACCESS_KEY_ID = dotenv.get("AWS_ACCESS_KEY_ID");
         this.AWS_SECRET_KEY = dotenv.get("AWS_SECRET_KEY");
 

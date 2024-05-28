@@ -8,8 +8,6 @@ import com.amazonaws.services.simpleemail.model.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
-
 import java.util.logging.Logger;
 
 
@@ -86,8 +84,6 @@ public class Mailer {
                     .withSource(creds.getSenderEmail()); // SES EMAIL
 
             sesClient.sendEmail(request);
-            LOGGER.info("Email sent to " + to);
-            System.out.println("Email sent to " + to);
         } catch (Exception ex) {
             LOGGER.severe("The email was not sent. Error message: " + ex.getMessage());
         }
@@ -105,4 +101,3 @@ public class Mailer {
     }
 }
 
-// TODO Create SES account, credentials and test implementation

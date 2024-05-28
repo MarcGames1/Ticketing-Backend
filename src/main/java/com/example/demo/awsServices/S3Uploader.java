@@ -5,7 +5,9 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 
 import java.io.File;
@@ -13,19 +15,24 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+@ApplicationScoped
 public class S3Uploader {
 
     private AmazonS3 s3Client;
     private String bucketName;
+    @Inject
+    private Credentials creds;
 
     // Constructor
-    public S3Uploader(Credentials credentials) {
-        this.s3Client = AmazonS3ClientBuilder.standard()
-                .withRegion(credentials.getRegion()) // Utilizează regiunea din obiectul Credentials
-                .build();
-        this.bucketName = credentials.getBucketName(); // Utilizează numele bucket-ului din obiectul Credentials
-    }
+    public S3Uploader() {}
 
+    @PostConstruct
+    private void init() {
+        this.s3Client = AmazonS3ClientBuilder.standard()
+                .withRegion(creds.getRegion())  // use region
+                .build();
+        this.bucketName = creds.getBucketName(); // Use Bucket Name
+    }
     // Load S3 file and return URL from S3
     public String uploadFile(String key, File file) throws FileNotFoundException {
         InputStream stream = new FileInputStream(file);
