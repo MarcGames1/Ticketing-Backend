@@ -1,18 +1,23 @@
 package com.example.demo.awsServices;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.HashMap;
 
 @ApplicationScoped
 public class S3Uploader {
@@ -33,15 +38,35 @@ public class S3Uploader {
         this.bucketName = creds.getBucketName(); // Use Bucket Name
     }
     // Load S3 file and return URL from S3
-    public String uploadFile(String key, InputStream file) throws FileNotFoundException {
-        InputStream stream = new FileInputStream(String.valueOf(file));
+    // Load S3 file and return URL from S3
+    public HashMap<String, Object> uploadFile(String key, InputStream file,String contentType) {
+
         ObjectMetadata metadata = new ObjectMetadata();
-//        metadata.setContentLength(file.length());
+        metadata.setContentType(contentType); // set default content type
+        PutObjectRequest request = new PutObjectRequest(bucketName, key, file, metadata);
+        request.setMetadata(metadata);
+        PutObjectResult putObjectResult = null;
+        try {
+            putObjectResult = s3Client.putObject(request);
+            putObjectResult.toString();
+        } catch (AmazonServiceException e) {
+            // The call was transmitted successfully, but Amazon S3 couldn't process
+            // it, so it returned an error response.
+            e.printStackTrace();
+        } catch (SdkClientException e) {
+            // Amazon S3 couldn't be contacted for a response, or the client
+            // couldn't parse the response from Amazon S3.
+            e.printStackTrace();
+        }
+        var uploadData = new HashMap<String, Object>();
 
-        PutObjectRequest request = new PutObjectRequest(bucketName, key, stream, metadata);
-        s3Client.putObject(request);
+        String url = s3Client.getUrl(bucketName, key).toString();
 
-        return s3Client.getUrl(bucketName, key).toString();
+        uploadData.put("url", url);
+        uploadData.put("key", key);
+        uploadData.put("putObjectResult", putObjectResult);
+
+        return uploadData;
     }
 
 
