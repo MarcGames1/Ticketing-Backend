@@ -90,6 +90,33 @@
           <artifactId>aws-java-sdk-s3</artifactId>
           <version>1.12.159</version>
       </dependency>
+                <!--      -->
+      <!-- Jersey core dependencies -->
+      <dependency>
+          <groupId>org.glassfish.jersey.core</groupId>
+          <artifactId>jersey-common</artifactId>
+          <version>3.0.2</version>
+      </dependency>
+      <dependency>
+          <groupId>org.glassfish.jersey.core</groupId>
+          <artifactId>jersey-server</artifactId>
+          <version>3.0.2</version>
+      </dependency>
+
+      <!-- Jersey multipart dependencies -->
+      <dependency>
+          <groupId>org.glassfish.jersey.media</groupId>
+          <artifactId>jersey-media-multipart</artifactId>
+          <version>3.0.2</version>
+      </dependency>
+
+      <!-- Jersey injection support -->
+      <dependency>
+          <groupId>org.glassfish.jersey.inject</groupId>
+          <artifactId>jersey-hk2</artifactId>
+          <version>3.0.2</version>
+      </dependency>
+
   </dependencies>
 
   <build>

@@ -1,19 +1,23 @@
 package com.example.demo;
 
 
-import com.example.demo.awsServices.Mailer;
 import jakarta.inject.Inject;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import test.TestController;
 
-import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.Map;
 
 @Path("/test")
 public class TestResource {
     @Inject
-    private Mailer mailer;
+    private TestController controller;
 
 
 
@@ -21,14 +25,29 @@ public class TestResource {
 
 
     @GET
-    @Produces(MediaType.TEXT_HTML)
-    public String test() {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response test() {
         try {
-            this.mailer.sendTestEmail();
-            return "Email sent successfully!";
+            JsonObject jsonObject = Json.createObjectBuilder()
+                    .add("success", true)
+                    .add("message", "Success!")
+                    // Adaugă alte valori după necesități
+                    .build();
+            throw new Exception("x");
+//            return Response.ok(jsonObject).build();
+
+
         } catch (Exception e) {
 
-            return "Failed to send email.";
+            JsonObject errorObject = Json.createObjectBuilder()
+                    .add("success", false)
+                    .add("message", "Failed to perform operation.")
+                    .add("error", e.getMessage())
+                    .build();
+           return  Response.serverError().entity(errorObject).build();
         }
+
     }
 }
+
+

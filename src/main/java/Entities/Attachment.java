@@ -50,4 +50,8 @@ private Long id;
     public static void delete (Attachment attachment) {
         // TODO attachment.s3Id  delete
     }
+
+    public Long getId() {
+        return this.id;
+    }
 }

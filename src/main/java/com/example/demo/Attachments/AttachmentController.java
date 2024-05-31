@@ -1,3 +1,4 @@
 package com.example.demo.Attachments;
 
-// TODO
+public class AttachmentController {
+}

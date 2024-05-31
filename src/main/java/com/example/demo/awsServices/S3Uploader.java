@@ -10,7 +10,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -34,10 +33,10 @@ public class S3Uploader {
         this.bucketName = creds.getBucketName(); // Use Bucket Name
     }
     // Load S3 file and return URL from S3
-    public String uploadFile(String key, File file) throws FileNotFoundException {
-        InputStream stream = new FileInputStream(file);
+    public String uploadFile(String key, InputStream file) throws FileNotFoundException {
+        InputStream stream = new FileInputStream(String.valueOf(file));
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(file.length());
+//        metadata.setContentLength(file.length());
 
         PutObjectRequest request = new PutObjectRequest(bucketName, key, stream, metadata);
         s3Client.putObject(request);
