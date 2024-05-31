@@ -30,13 +30,10 @@ public class UploadController {
                            @FormDataParam("file") FormDataContentDisposition fileMetaData) {
 
         String fileId = UUID.randomUUID().toString();
-        String contentType = fileMetaData.getType();  // Attempt to extract content type from FormDataContentDisposition, but this is incorrect
-        if (contentType == null) {
-            contentType = "application/octet-stream";  // Default content type if none specified
-        }
+
 
         try {
-            var jsonResponse = uploader.uploadFile(fileId, fileInputStream, contentType);
+            var jsonResponse = uploader.uploadFile(fileId, fileInputStream);
             return Response.status(Response.Status.CREATED).entity(jsonResponse).build();
         } catch (Exception e) {
             e.printStackTrace();

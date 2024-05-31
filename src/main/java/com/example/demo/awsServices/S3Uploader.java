@@ -39,10 +39,10 @@ public class S3Uploader {
     }
     // Load S3 file and return URL from S3
     // Load S3 file and return URL from S3
-    public HashMap<String, Object> uploadFile(String key, InputStream file,String contentType) {
+    public HashMap<String, Object> uploadFile(String key, InputStream file) {
 
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(contentType); // set default content type
+        metadata.setContentType("application/octet-stream"); // set default content type
         PutObjectRequest request = new PutObjectRequest(bucketName, key, file, metadata);
         request.setMetadata(metadata);
         PutObjectResult putObjectResult = null;
