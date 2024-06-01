@@ -1,6 +1,8 @@
 package Mapper;
 
+import Auth.DTO.SignupDTO;
 import Entities.User;
+import Shared.DTO.AuthResponse;
 import User.DTO.CreateUserDTO;
 import User.DTO.UpdateUserDTO;
 import org.mapstruct.Mapper;
@@ -17,4 +19,7 @@ public interface UserMapper {
     User create(CreateUserDTO user);
 
     User update(@MappingTarget User user, UpdateUserDTO dto);
+
+    User signup(SignupDTO dto);
+    AuthResponse auth(User user);
 }

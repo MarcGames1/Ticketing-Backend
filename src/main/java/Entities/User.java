@@ -66,10 +66,8 @@ public class User implements Serializable {
     }
 
 
-    private boolean isCorrectPassword (String inputPassword) {
-//        TODO Method that compares the inputPassword to the Hashed Password in DB and
-        // returns a bool
-        return true;
+    public boolean isCorrectPassword (String inputPassword) {
+        return inputPassword != null && inputPassword.equals(this.password);
     }
 
     public EmployeeRole getRole() {
