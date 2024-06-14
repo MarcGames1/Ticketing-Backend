@@ -1,7 +1,10 @@
 package Ticket;
+import Enums.EmployeeRole;
 import Ticket.DTO.CreateTicketDTO;
 import Ticket.DTO.TicketDTO;
+import Ticket.DTO.TicketsByStatus;
 import Ticket.DTO.UpdateTicketDTO;
+import Utils.Secured;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -20,12 +23,14 @@ public class TicketController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TicketDTO> getAll(){
+    @Secured
+    public List<TicketsByStatus> getAll(){
         return service.getAll();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Secured(roles = {EmployeeRole.MANAGER, EmployeeRole.SUPERVISOR})
     public Response create(@Valid CreateTicketDTO dto) {
         var id = service.create(dto);
         return Response.status(Response.Status.CREATED)
@@ -40,6 +45,7 @@ public class TicketController {
     }
 
     @PATCH
+    @Secured(roles = {EmployeeRole.MANAGER, EmployeeRole.SUPERVISOR})
     public Response update(@Valid UpdateTicketDTO dto){
         service.update(dto);
         return Response.ok().build();
@@ -47,6 +53,7 @@ public class TicketController {
 
     @DELETE
     @Path("/{id}")
+    @Secured(roles = {EmployeeRole.MANAGER, EmployeeRole.SUPERVISOR})
     public Response delete(@PathParam("id") Long id){
         var deletedCount = service.delete(id);
         return Response.ok(deletedCount).build();

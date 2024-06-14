@@ -1,18 +1,24 @@
 package Ticket;
 import Entities.*;
 
+import Enums.EmployeeRole;
+import Enums.TaskStatus;
 import Mapper.TicketMapper;
 import Ticket.DTO.CreateTicketDTO;
 import Ticket.DTO.TicketDTO;
+import Ticket.DTO.TicketsByStatus;
 import Ticket.DTO.UpdateTicketDTO;
+import Utils.CurrentRequestData;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
@@ -22,8 +28,12 @@ public class TicketService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Inject
+    private CurrentRequestData currentRequestData;
+
     public Long create(CreateTicketDTO dto) {
         Ticket model = TicketMapper.INSTANCE.create(dto);
+        model.setStatus(TaskStatus.Pending);
         entityManager.persist(model);
         return model.getId();
     }
@@ -44,13 +54,35 @@ public class TicketService {
         return TicketMapper.INSTANCE.get(model);
     }
 
-    public List<TicketDTO> getAll(){
+    public List<TicketsByStatus> getAll(){
+        var user = currentRequestData.getUser();
+        var tickets = generateTicketQuery(user).fetch();
+
+        var response = new ArrayList<TicketsByStatus>();
+        for(var status : TaskStatus.values()){
+            var item = new TicketsByStatus();
+            item.status = status;
+            item.tickets = TicketMapper.INSTANCE.getAll(tickets.stream()
+                    .filter(x -> x.getStatus() == status)
+                    .toList());
+            response.add(item);
+        }
+        return response;
+    }
+
+    private JPAQuery<Ticket> generateTicketQuery(User user){
         QTicket ticket = QTicket.ticket;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
-        var result = query.select(ticket)
-                .from(ticket)
-                .fetch();
-        return TicketMapper.INSTANCE.getAll(result);
+
+        return switch (user.getRole()) {
+            case MANAGER, SUPERVISOR -> query.select(ticket)
+                    .from(ticket)
+                    .leftJoin(ticket.tasks, QTask.task);
+            case EMPLOYEE -> query.select(ticket)
+                    .from(ticket)
+                    .innerJoin(ticket.tasks, QTask.task)
+                    .where(QTask.task.user.eq(user));
+        };
     }
 
     public void update(UpdateTicketDTO dto) {

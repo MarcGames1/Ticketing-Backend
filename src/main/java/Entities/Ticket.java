@@ -1,4 +1,5 @@
 package Entities;
+import Enums.TaskStatus;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -18,14 +19,18 @@ public class Ticket implements Serializable {
     private List<Attachment> attachments;
     @OneToMany(mappedBy = "ticket",fetch = FetchType.LAZY)
     private List<Task> tasks;
+
+    @Enumerated(EnumType.ORDINAL)
+    private TaskStatus status;
     public Ticket() {}
 
-    public Ticket(Long id, String title, String content, List<Attachment> attachments, List<Task> tasks) {
+    public Ticket(Long id, String title, String content, List<Attachment> attachments, List<Task> tasks, TaskStatus status) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.attachments = attachments;
         this.tasks = tasks;
+        this.status = status;
     }
 
     public Long getId() {
@@ -66,5 +71,13 @@ public class Ticket implements Serializable {
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TaskStatus status) {
+        this.status = status;
     }
 }
