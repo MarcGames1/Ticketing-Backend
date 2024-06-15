@@ -11,6 +11,9 @@
       <property name="javax.persistence.jdbc.user" value="postgres" /> <!-- DB User -->
       <property name="javax.persistence.jdbc.password" value="0000" /> <!-- DB Password -->
       <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
+      <property name="eclipselink.cache.shared.default" value="false"/>
+      <property name="eclipselink.cache.size.default" value="0"/>
+      <property name="eclipselink.cache.type.default" value="None"/>
     </properties>
   </persistence-unit>
 </persistence>

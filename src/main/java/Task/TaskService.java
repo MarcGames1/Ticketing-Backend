@@ -37,6 +37,8 @@ public class TaskService {
         model.setTicket(ticket);
         model.setStatus(TaskStatus.Pending);
         entityManager.persist(model);
+        entityManager.flush();
+        entityManager.clear();
         return model.getId();
     }
 
@@ -90,8 +92,11 @@ public class TaskService {
     public Long delete(Long id) {
         QTask task = QTask.task;
         JPAQueryFactory queryBuilder = new JPAQueryFactory(entityManager);
-        return queryBuilder.delete(task)
+        var res = queryBuilder.delete(task)
                 .where(task.id.eq(id))
                 .execute();
+        entityManager.flush();
+        entityManager.clear();
+        return res;
     }
 }

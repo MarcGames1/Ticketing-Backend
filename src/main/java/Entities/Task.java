@@ -1,7 +1,6 @@
 package Entities;
 
 import Enums.TaskStatus;
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 
 import java.io.Serializable;

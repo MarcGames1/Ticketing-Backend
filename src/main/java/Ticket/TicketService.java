@@ -1,7 +1,6 @@
 package Ticket;
 import Entities.*;
 
-import Enums.EmployeeRole;
 import Enums.TaskStatus;
 import Mapper.TicketMapper;
 import Ticket.DTO.CreateTicketDTO;
@@ -39,15 +38,15 @@ public class TicketService {
     }
 
     public TicketDTO getById(Long id) {
-        QTicket ticket = QTicket.ticket;
         QAttachment attachment = QAttachment.attachment;
         QTask task = QTask.task;
-        JPAQuery<?> query = new JPAQuery<Void>(entityManager);
-        var model = query.select(ticket)
-                .from(ticket)
-                .leftJoin(ticket.attachments, attachment)
-                .leftJoin(ticket.tasks, task)
-                .where(ticket.id.eq(id))
+        JPAQuery<?> query = new JPAQuery<Ticket>(entityManager);
+        var model = query.select(QTicket.ticket)
+                .distinct()
+                .from(QTicket.ticket)
+                .leftJoin(QTicket.ticket.attachments, attachment).fetchJoin()
+                .leftJoin(QTicket.ticket.tasks, task).fetchJoin()
+                .where(QTicket.ticket.id.eq(id))
                 .fetchOne();
         if(model == null)
             throw  new NotFoundException("Ticket not found");
@@ -76,12 +75,15 @@ public class TicketService {
 
         return switch (user.getRole()) {
             case MANAGER, SUPERVISOR -> query.select(ticket)
+                    .distinct()
                     .from(ticket)
-                    .leftJoin(ticket.tasks, QTask.task);
+                    .join(ticket.tasks, QTask.task)
+                    .fetchJoin();
             case EMPLOYEE -> query.select(ticket)
+                    .distinct()
                     .from(ticket)
-                    .innerJoin(ticket.tasks, QTask.task)
-                    .where(QTask.task.user.eq(user));
+                    .join(ticket.tasks, QTask.task)
+                    .where(QTask.task.user.eq(user)).fetchJoin();
         };
     }
 
