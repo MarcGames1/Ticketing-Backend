@@ -3,12 +3,10 @@ package Utils;
 import User.UserService;
 import jakarta.inject.Inject;
 import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 
-@WebFilter("/*")
 public class UserMiddleware implements Filter {
 
     @Inject

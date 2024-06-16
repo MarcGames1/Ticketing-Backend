@@ -1,12 +1,10 @@
 package Utils;
 
 import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebFilter("/*")
 public class CORSFilter implements Filter {
 
     public void init(FilterConfig filterConfig) throws ServletException {}
