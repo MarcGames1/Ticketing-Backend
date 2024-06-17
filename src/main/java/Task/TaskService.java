@@ -1,17 +1,24 @@
 package Task;
 
 import Entities.*;
+import Enums.EmployeeRole;
 import Enums.TaskStatus;
 import Mapper.TaskMapper;
+import Mapper.TaskStatusMapper;
+import Shared.DTO.ChangeStatusDTO;
 import Task.DTO.CreateTaskDTO;
 import Task.DTO.TaskDTO;
 import Task.DTO.UpdateTaskDTO;
+import Utils.CurrentRequestData;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.NotAllowedException;
 import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
@@ -25,11 +32,14 @@ public class TaskService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Long create(CreateTaskDTO dto) {
+    @Inject
+    private CurrentRequestData currentRequestData;
+
+    public Long create(CreateTaskDTO dto, Long ticketId) {
         var user = entityManager.find(User.class, dto.getUserId());
         if(user == null)
             throw new NotFoundException("User not found");
-        var ticket = entityManager.find(Ticket.class, dto.getTicketId());
+        var ticket = entityManager.find(Ticket.class, ticketId);
         if(ticket == null)
             throw new NotFoundException("Ticket not found");
         Task model = TaskMapper.INSTANCE.create(dto);
@@ -42,23 +52,29 @@ public class TaskService {
         return model.getId();
     }
 
-    public TaskDTO getById(Long id) {
+    public TaskDTO getById(Long id, Long ticketId) {
         QTask task = QTask.task;
         QTicket ticket = QTicket.ticket;
         QAttachment attachment = QAttachment.attachment;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
+        var user = currentRequestData.getUser();
         var model = query.select(task)
                 .from(task)
-                .join(task.attachments, attachment)
+                .leftJoin(task.attachments, attachment)
                 .join(task.ticket, ticket)
                 .where(task.id.eq(id))
+                .where(task.ticket.id.eq(ticketId))
                 .fetchOne();
         if(model == null)
             throw  new NotFoundException("Task not found");
+
+        if(user.getRole() == EmployeeRole.EMPLOYEE && !Objects.equals(model.getUserId(), user.getId())){
+            throw new ForbiddenException("This task doesn't belong to you");
+        }
         return TaskMapper.INSTANCE.get(model);
     }
 
-    public List<TaskDTO> getAll(Long ticketId, Long userId){
+    public List<TaskDTO> getAll(Long ticketId){
         QTask task = QTask.task;
         QTicket ticket = QTicket.ticket;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
@@ -67,12 +83,35 @@ public class TaskService {
                 .where(Optional.ofNullable(ticketId)
                         .map(task.ticket.id::eq)
                         .orElse(null))
-                .where(Optional.ofNullable(userId)
-                        .map(task.user.id::eq)
-                        .orElse(null))
+                //.where(Optional.ofNullable(currentRequestData.getUser().getId())
+                //        .map(task.user.id::eq)
+                //        .orElse(null))
                 .join(task.ticket, ticket)
                 .fetch();
         return TaskMapper.INSTANCE.getAll(result);
+    }
+
+    public void changeStatus(Long id, ChangeStatusDTO dto) {
+        var desiredStatus = TaskStatusMapper.INSTANCE.stringToEnum(dto.status);
+        JPAQuery<?> query = new JPAQuery<Task>(entityManager);
+        var model = query.select(QTask.task)
+                .from(QTask.task)
+                .where(QTask.task.id.eq(id))
+                .fetchOne();
+
+        if(model == null) {
+            throw  new NotFoundException("Task not found");
+        }
+
+        var user = currentRequestData.getUser();
+
+        if(user.getRole() == EmployeeRole.EMPLOYEE && !Objects.equals(model.getUserId(), user.getId())){
+            throw new ForbiddenException("You can't change the status of this task");
+        }
+
+        model.setStatus(desiredStatus);
+
+        entityManager.merge(model);
     }
 
     public void update(UpdateTaskDTO dto) {
@@ -91,7 +130,11 @@ public class TaskService {
 
     public Long delete(Long id) {
         QTask task = QTask.task;
+        QAttachment attachment = QAttachment.attachment;
         JPAQueryFactory queryBuilder = new JPAQueryFactory(entityManager);
+        queryBuilder.delete(attachment)
+                .where(attachment.task.id.eq(id))
+                .execute();
         var res = queryBuilder.delete(task)
                 .where(task.id.eq(id))
                 .execute();

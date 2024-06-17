@@ -1,5 +1,6 @@
 package Ticket;
 import Enums.EmployeeRole;
+import Shared.DTO.ChangeStatusDTO;
 import Ticket.DTO.CreateTicketDTO;
 import Ticket.DTO.TicketDTO;
 import Ticket.DTO.TicketsByStatus;
@@ -40,6 +41,7 @@ public class TicketController {
 
     @GET
     @Path("/{id}")
+    @Secured
     public TicketDTO getById(@PathParam("id") Long id) {
         return service.getById(id);
     }
@@ -48,6 +50,14 @@ public class TicketController {
     @Secured(roles = {EmployeeRole.MANAGER, EmployeeRole.SUPERVISOR})
     public Response update(@Valid UpdateTicketDTO dto){
         service.update(dto);
+        return Response.ok().build();
+    }
+
+    @PATCH
+    @Path("/{id}/changeStatus")
+    @Secured
+    public Response changeStatus(@PathParam("id") Long id, @Valid ChangeStatusDTO dto){
+        service.changeStatus(id, dto);
         return Response.ok().build();
     }
 

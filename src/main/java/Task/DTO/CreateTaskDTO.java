@@ -10,15 +10,12 @@ public class CreateTaskDTO {
     private String description;
     @NotNull
     private Long userId;
-    @NotNull
-    private Long ticketId;
     public CreateTaskDTO(){}
 
-    public CreateTaskDTO(String title, String description, Long userId, Long ticketId) {
+    public CreateTaskDTO(String title, String description, Long userId) {
         this.title = title;
         this.description = description;
         this.userId = userId;
-        this.ticketId = ticketId;
     }
 
     public String getTitle() {
@@ -43,13 +40,5 @@ public class CreateTaskDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public Long getTicketId() {
-        return ticketId;
-    }
-
-    public void setTicketId(Long ticketId) {
-        this.ticketId = ticketId;
     }
 }

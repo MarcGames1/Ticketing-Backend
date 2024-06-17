@@ -1,8 +1,11 @@
 package Ticket;
 import Entities.*;
 
+import Enums.EmployeeRole;
 import Enums.TaskStatus;
+import Mapper.TaskStatusMapper;
 import Mapper.TicketMapper;
+import Shared.DTO.ChangeStatusDTO;
 import Ticket.DTO.CreateTicketDTO;
 import Ticket.DTO.TicketDTO;
 import Ticket.DTO.TicketsByStatus;
@@ -15,10 +18,13 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.NotAllowedException;
 import jakarta.ws.rs.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @ApplicationScoped
 @Transactional
@@ -50,6 +56,10 @@ public class TicketService {
                 .fetchOne();
         if(model == null)
             throw  new NotFoundException("Ticket not found");
+        var user = currentRequestData.getUser();
+        if(user.getRole() == EmployeeRole.EMPLOYEE && model.getTasks().stream().noneMatch(x -> Objects.equals(x.getUser().getId(), user.getId()))){
+            throw new ForbiddenException("You can't see this ticket");
+        }
         return TicketMapper.INSTANCE.get(model);
     }
 
@@ -77,12 +87,12 @@ public class TicketService {
             case MANAGER, SUPERVISOR -> query.select(ticket)
                     .distinct()
                     .from(ticket)
-                    .join(ticket.tasks, QTask.task)
+                    .leftJoin(ticket.tasks, QTask.task)
                     .fetchJoin();
             case EMPLOYEE -> query.select(ticket)
                     .distinct()
                     .from(ticket)
-                    .join(ticket.tasks, QTask.task)
+                    .leftJoin(ticket.tasks, QTask.task)
                     .where(QTask.task.user.eq(user)).fetchJoin();
         };
     }
@@ -95,9 +105,49 @@ public class TicketService {
         entityManager.merge(model);
     }
 
+    public void changeStatus(Long id, ChangeStatusDTO dto) {
+        var desiredStatus = TaskStatusMapper.INSTANCE.stringToEnum(dto.status);
+        JPAQuery<?> query = new JPAQuery<Ticket>(entityManager);
+        var model = query.select(QTicket.ticket)
+                .distinct()
+                .from(QTicket.ticket)
+                .leftJoin(QTicket.ticket.tasks, QTask.task).fetchJoin()
+                .where(QTicket.ticket.id.eq(id))
+                .fetchOne();
+        if(model == null) {
+            throw  new NotFoundException("Ticket not found");
+        }
+
+        var user = currentRequestData.getUser();
+
+        if(user.getRole() == EmployeeRole.EMPLOYEE && model.getTasks().stream().noneMatch(x -> Objects.equals(x.getUser().getId(), user.getId()))){
+            throw new ForbiddenException("You can't see this ticket");
+        }
+
+        if(desiredStatus == TaskStatus.Completed){
+            if(!model.getTasks().stream().allMatch(x -> x.getStatus() == TaskStatus.Completed)){
+                throw new NotAllowedException("Ticket still have uncompleted tasks");
+            }
+
+            model.setStatus(desiredStatus);
+        } else {
+            model.setStatus(desiredStatus);
+        }
+        entityManager.merge(model);
+    }
+
     public Long delete(Long id) {
         QTicket ticket = QTicket.ticket;
+        QTask task = QTask.task;
+        QAttachment attachment = QAttachment.attachment;
         JPAQueryFactory queryBuilder = new JPAQueryFactory(entityManager);
+        //TODO: Delete Attachments related to tasks and remove the files from the buckets for ticket & tasks attachments
+        queryBuilder.delete(task)
+                .where(task.ticket.id.eq(id))
+                .execute();
+        queryBuilder.delete(attachment)
+                .where(attachment.ticket.id.eq(id))
+                .execute();
         return queryBuilder.delete(ticket)
                 .where(ticket.id.eq(id))
                 .execute();

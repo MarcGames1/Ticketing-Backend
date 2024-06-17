@@ -1,13 +1,10 @@
 package Mapper;
 
-import Entities.Task;
 import Entities.Ticket;
-import Task.DTO.TaskDTO;
 import Ticket.DTO.CreateTicketDTO;
 import Ticket.DTO.TicketDTO;
 import Ticket.DTO.UpdateTicketDTO;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
