@@ -2,6 +2,7 @@ package Task;
 import Entities.Task;
 import Enums.EmployeeRole;
 import Shared.DTO.ChangeStatusDTO;
+import Task.DTO.AssignUserToTaskDTO;
 import Task.DTO.CreateTaskDTO;
 import Task.DTO.TaskDTO;
 import Task.DTO.UpdateTaskDTO;
@@ -67,5 +68,13 @@ public class TaskController {
     public Response delete(@PathParam("id") Long id){
         var deletedCount = service.delete(id);
         return Response.ok(deletedCount).build();
+    }
+
+    @POST
+    @Path("/{id}/assignUser")
+    @Secured(roles = {EmployeeRole.MANAGER, EmployeeRole.SUPERVISOR})
+    public Response assignUserToTask(@PathParam("id") Long taskId, @Valid AssignUserToTaskDTO dto){
+        service.assignUserToTask(taskId,dto);
+        return Response.ok().build();
     }
 }

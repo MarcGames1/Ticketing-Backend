@@ -6,6 +6,7 @@ import Enums.TaskStatus;
 import Mapper.TaskMapper;
 import Mapper.TaskStatusMapper;
 import Shared.DTO.ChangeStatusDTO;
+import Task.DTO.AssignUserToTaskDTO;
 import Task.DTO.CreateTaskDTO;
 import Task.DTO.TaskDTO;
 import Task.DTO.UpdateTaskDTO;
@@ -141,5 +142,31 @@ public class TaskService {
         entityManager.flush();
         entityManager.clear();
         return res;
+    }
+
+    public void assignUserToTask(Long taskId, AssignUserToTaskDTO dto){
+        QTask task = QTask.task;
+        JPAQueryFactory queryBuilder = new JPAQueryFactory(entityManager);
+        var model = queryBuilder.select(task)
+                .from(task)
+                .where(task.id.eq(taskId))
+                .fetchOne();
+
+        if(model == null)
+            throw new NotFoundException("Task not found");
+
+        QUser qUser = QUser.user;
+        var user = queryBuilder.select(qUser)
+                .from(qUser)
+                .where(qUser.id.eq(dto.userId))
+                .fetchOne();
+
+        if(user == null)
+            throw new NotFoundException("User not found");
+
+        model.setUser(user);
+        entityManager.merge(model);
+        entityManager.flush();
+        entityManager.clear();
     }
 }
