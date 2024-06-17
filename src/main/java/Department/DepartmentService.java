@@ -66,12 +66,12 @@ public class DepartmentService {
     public Long delete(Long id) {
         QUser user = QUser.user;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
-        var existedUser = query.select(user)
+        var existedUsers = query.select(user)
                 .from(user)
                 .where(user.department.id.eq(id))
-                .fetchOne();
-        if(existedUser != null)
-            throw new NotAllowedException("This department has users linked to it");
+                .fetch();
+        if(existedUsers != null && !existedUsers.isEmpty())
+            throw new NotAllowedException("This department has users linked to it","",new String[]{});
         QDepartment department = QDepartment.department;
         JPAQueryFactory queryBuilder = new JPAQueryFactory(entityManager);
         return queryBuilder.delete(department)

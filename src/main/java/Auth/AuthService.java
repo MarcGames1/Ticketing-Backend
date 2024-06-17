@@ -30,7 +30,7 @@ public class AuthService {
     public AuthResponse signup(SignupDTO dto) {
         var existedUser = getUserByEmail(dto.getEmail());
         if(existedUser != null)
-            throw new NotAllowedException("This email is already existed");
+            throw new NotAllowedException("This email is already existed","",new String[]{});
         User user = UserMapper.INSTANCE.signup(dto);
         if(dto.getDepartmentId() != null){
             Department department = entityManager.find(Department.class, dto.getDepartmentId());

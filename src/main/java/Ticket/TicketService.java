@@ -126,7 +126,7 @@ public class TicketService {
 
         if(desiredStatus == TaskStatus.Completed){
             if(!model.getTasks().stream().allMatch(x -> x.getStatus() == TaskStatus.Completed)){
-                throw new NotAllowedException("Ticket still have uncompleted tasks");
+                throw new NotAllowedException("Ticket still have uncompleted tasks","",new String[]{});
             }
 
             model.setStatus(desiredStatus);
