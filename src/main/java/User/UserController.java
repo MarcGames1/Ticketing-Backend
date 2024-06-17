@@ -1,8 +1,11 @@
 package User;
 
 import Entities.User;
+import Enums.EmployeeRole;
+import Shared.DTO.UserDTO;
 import User.DTO.CreateUserDTO;
 import User.DTO.UpdateUserDTO;
+import Utils.Secured;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -22,6 +25,14 @@ public class UserController {
     @Produces(MediaType.APPLICATION_JSON)
     public List<User> getAll(@QueryParam("departmentId") Long departmentId){
         return service.getAll(departmentId);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/list")
+    @Secured(roles = {EmployeeRole.MANAGER, EmployeeRole.SUPERVISOR})
+    public List<UserDTO> getAllList(){
+        return service.getAllUsersList();
     }
 
     @POST

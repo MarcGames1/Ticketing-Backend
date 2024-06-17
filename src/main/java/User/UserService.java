@@ -3,6 +3,7 @@ package User;
 import Entities.Department;
 import Entities.QUser;
 import Entities.User;
+import Shared.DTO.UserDTO;
 import User.DTO.CreateUserDTO;
 import Mapper.UserMapper;
 import User.DTO.UpdateUserDTO;
@@ -86,5 +87,15 @@ public class UserService {
         return queryBuilder.delete(user)
                 .where(user.id.eq(id))
                 .execute();
+    }
+
+    public List<UserDTO> getAllUsersList(){
+        QUser user = QUser.user;
+        JPAQueryFactory queryBuilder = new JPAQueryFactory(entityManager);
+        var res = queryBuilder.select(user)
+                .from(user)
+                .fetch();
+
+        return UserMapper.INSTANCE.simpleList(res);
     }
 }
