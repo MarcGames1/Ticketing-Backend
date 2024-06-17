@@ -121,7 +121,7 @@ public class TicketService {
         var user = currentRequestData.getUser();
 
         if(user.getRole() == EmployeeRole.EMPLOYEE && model.getTasks().stream().noneMatch(x -> Objects.equals(x.getUser().getId(), user.getId()))){
-            throw new ForbiddenException("You can't see this ticket");
+            throw new ForbiddenException("You can't change the status of this ticket");
         }
 
         if(desiredStatus == TaskStatus.Completed){
