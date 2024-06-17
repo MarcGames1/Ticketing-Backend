@@ -1,7 +1,10 @@
 package Department;
 import Department.DTO.CreateDepartmentDTO;
+import Department.DTO.DepartmentDTO;
 import Department.DTO.UpdateDepartmentDTO;
 import Entities.Department;
+import Enums.EmployeeRole;
+import Utils.Secured;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -19,12 +22,14 @@ public class DepartmentController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Department> getAll(){
+    @Secured(roles = {EmployeeRole.MANAGER})
+    public List<DepartmentDTO> getAll(){
         return service.getAll();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Secured(roles = {EmployeeRole.MANAGER})
     public Response create(@Valid CreateDepartmentDTO dto) {
         var id = service.create(dto);
         return Response.status(Response.Status.CREATED)
@@ -34,11 +39,13 @@ public class DepartmentController {
 
     @GET
     @Path("/{id}")
-    public Department getById(@PathParam("id") Long id) {
+    @Secured(roles = {EmployeeRole.MANAGER})
+    public DepartmentDTO getById(@PathParam("id") Long id) {
         return service.getById(id);
     }
 
     @PATCH
+    @Secured(roles = {EmployeeRole.MANAGER})
     public Response update(@Valid UpdateDepartmentDTO dto){
         service.update(dto);
         return Response.ok().build();
@@ -46,6 +53,7 @@ public class DepartmentController {
 
     @DELETE
     @Path("/{id}")
+    @Secured(roles = {EmployeeRole.MANAGER})
     public Response delete(@PathParam("id") Long id){
         var deletedCount = service.delete(id);
         return Response.ok(deletedCount).build();

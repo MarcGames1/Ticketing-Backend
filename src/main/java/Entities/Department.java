@@ -34,8 +34,6 @@ public class Department implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-
-// TODO methods for users
+    public List<User> getUsers(){ return users;}
 
 }

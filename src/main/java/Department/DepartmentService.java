@@ -1,6 +1,7 @@
 package Department;
 
 import Department.DTO.CreateDepartmentDTO;
+import Department.DTO.DepartmentDTO;
 import Department.DTO.UpdateDepartmentDTO;
 import Entities.Department;
 import Entities.QDepartment;
@@ -34,8 +35,7 @@ public class DepartmentService {
         return model.getId();
     }
 
-    public Department getById(Long id) {
-//        What is QDepartment?
+    public DepartmentDTO getById(Long id) {
         QDepartment department = QDepartment.department;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
         var model = query.select(department)
@@ -44,15 +44,16 @@ public class DepartmentService {
                 .fetchOne();
         if(model == null)
             throw  new NotFoundException("Department not found");
-        return model;
+        return DepartmentMapper.INSTANCE.getOne(model);
     }
 
-    public List<Department> getAll(){
+    public List<DepartmentDTO> getAll(){
         QDepartment department = QDepartment.department;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
-        return query.select(department)
+        var res = query.select(department)
                 .from(department)
                 .fetch();
+        return DepartmentMapper.INSTANCE.getAll(res);
     }
 
     public void update(UpdateDepartmentDTO dto) {
