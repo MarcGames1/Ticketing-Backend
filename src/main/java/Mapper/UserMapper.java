@@ -5,6 +5,7 @@ import Entities.User;
 import Shared.DTO.AuthResponse;
 import Shared.DTO.UserDTO;
 import User.DTO.CreateUserDTO;
+import User.DTO.FullUserDTO;
 import User.DTO.UpdateUserDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -25,7 +26,8 @@ public interface UserMapper {
 
     User signup(SignupDTO dto);
     AuthResponse auth(User user);
-
     UserDTO simple(User user);
     List<UserDTO> simpleList(List<User> users);
+    FullUserDTO full(User user);
+    List<FullUserDTO> fullList(List<User> users);
 }

@@ -6,6 +6,7 @@ import Entities.User;
 import Shared.DTO.UserDTO;
 import User.DTO.CreateUserDTO;
 import Mapper.UserMapper;
+import User.DTO.FullUserDTO;
 import User.DTO.UpdateUserDTO;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -42,7 +43,19 @@ public class UserService {
         return user.getId();
     }
 
-    public User getById(Long id) {
+    public FullUserDTO getById(Long id) {
+        QUser user = QUser.user;
+        JPAQuery<?> query = new JPAQuery<Void>(entityManager);
+        var model = query.select(user)
+                .from(user)
+                .where(user.id.eq(id))
+                .fetchOne();
+        if(model == null)
+            throw  new NotFoundException("User not found");
+        return UserMapper.INSTANCE.full(model);
+    }
+
+    public User getByIdRaw(Long id) {
         QUser user = QUser.user;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
         var model = query.select(user)
@@ -54,15 +67,16 @@ public class UserService {
         return model;
     }
 
-    public List<User> getAll(Long departmentId){
+    public List<FullUserDTO> getAll(Long departmentId){
         QUser user = QUser.user;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
-        return query.select(user)
+        var res = query.select(user)
                 .from(user)
                 .where(Optional.ofNullable(departmentId)
                         .map(user.department.id::eq)
                         .orElse(null))
                 .fetch();
+        return UserMapper.INSTANCE.fullList(res);
     }
 
     public void update(UpdateUserDTO dto) {

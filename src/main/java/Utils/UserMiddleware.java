@@ -29,7 +29,7 @@ public class UserMiddleware implements Filter {
         if (userIdHeader != null) {
             try {
                 Long userId = Long.valueOf(userIdHeader);
-                var user = service.getById(userId);
+                var user = service.getByIdRaw(userId);
                 if (user != null) {
                     currentRequestData.setUser(user);
                 }

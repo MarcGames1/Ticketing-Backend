@@ -4,6 +4,7 @@ import Entities.User;
 import Enums.EmployeeRole;
 import Shared.DTO.UserDTO;
 import User.DTO.CreateUserDTO;
+import User.DTO.FullUserDTO;
 import User.DTO.UpdateUserDTO;
 import Utils.Secured;
 import jakarta.enterprise.context.RequestScoped;
@@ -23,7 +24,8 @@ public class UserController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> getAll(@QueryParam("departmentId") Long departmentId){
+    @Secured(roles = {EmployeeRole.MANAGER})
+    public List<FullUserDTO> getAll(@QueryParam("departmentId") Long departmentId){
         return service.getAll(departmentId);
     }
 
@@ -35,22 +37,24 @@ public class UserController {
         return service.getAllUsersList();
     }
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(@Valid CreateUserDTO dto) {
-        var id = service.create(dto);
-        return Response.status(Response.Status.CREATED)
-                .entity(id)
-                .build();
-    }
+    //@POST
+    //@Consumes(MediaType.APPLICATION_JSON)
+    //public Response create(@Valid CreateUserDTO dto) {
+    //    var id = service.create(dto);
+    //    return Response.status(Response.Status.CREATED)
+    //            .entity(id)
+    //            .build();
+    //}
 
     @GET
     @Path("/{id}")
-    public User getById(@PathParam("id") Long id) {
+    @Secured(roles = {EmployeeRole.MANAGER})
+    public FullUserDTO getById(@PathParam("id") Long id) {
         return service.getById(id);
     }
 
     @PATCH
+    @Secured(roles = {EmployeeRole.MANAGER})
     public Response update(@Valid UpdateUserDTO dto){
         service.update(dto);
         return Response.ok().build();
@@ -58,6 +62,7 @@ public class UserController {
 
     @DELETE
     @Path("/{id}")
+    @Secured(roles = {EmployeeRole.MANAGER})
     public Response delete(@PathParam("id") Long id){
         var deletedCount = service.delete(id);
         return Response.ok(deletedCount).build();
