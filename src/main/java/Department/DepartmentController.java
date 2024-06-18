@@ -1,4 +1,5 @@
 package Department;
+import Department.DTO.BasicDepartmentDTO;
 import Department.DTO.CreateDepartmentDTO;
 import Department.DTO.DepartmentDTO;
 import Department.DTO.UpdateDepartmentDTO;
@@ -25,6 +26,13 @@ public class DepartmentController {
     @Secured(roles = {EmployeeRole.MANAGER})
     public List<DepartmentDTO> getAll(){
         return service.getAll();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/list")
+    public List<BasicDepartmentDTO> getList(){
+        return service.getList();
     }
 
     @POST

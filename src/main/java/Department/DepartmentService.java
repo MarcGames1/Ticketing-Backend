@@ -1,5 +1,6 @@
 package Department;
 
+import Department.DTO.BasicDepartmentDTO;
 import Department.DTO.CreateDepartmentDTO;
 import Department.DTO.DepartmentDTO;
 import Department.DTO.UpdateDepartmentDTO;
@@ -54,6 +55,15 @@ public class DepartmentService {
                 .from(department)
                 .fetch();
         return DepartmentMapper.INSTANCE.getAll(res);
+    }
+
+    public List<BasicDepartmentDTO> getList(){
+        QDepartment department = QDepartment.department;
+        JPAQuery<?> query = new JPAQuery<Void>(entityManager);
+        var res = query.select(department)
+                .from(department)
+                .fetch();
+        return DepartmentMapper.INSTANCE.getList(res);
     }
 
     public void update(UpdateDepartmentDTO dto) {

@@ -1,5 +1,6 @@
 package Mapper;
 
+import Department.DTO.BasicDepartmentDTO;
 import Department.DTO.CreateDepartmentDTO;
 import Department.DTO.DepartmentDTO;
 import Department.DTO.UpdateDepartmentDTO;
@@ -19,6 +20,8 @@ public interface DepartmentMapper {
     Department create(CreateDepartmentDTO dto);
     Department update(@MappingTarget Department department, UpdateDepartmentDTO dto);
     List<DepartmentDTO> getAll(List<Department> departments);
+
+    List<BasicDepartmentDTO> getList(List<Department> departments);
 
     @Mapping(source = "users", target = "usersCount")
     DepartmentDTO getOne(Department department);
