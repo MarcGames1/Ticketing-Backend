@@ -1,7 +1,6 @@
 package Auth;
 
-import Auth.DTO.LoginDTO;
-import Auth.DTO.SignupDTO;
+import Auth.DTO.*;
 import Shared.DTO.AuthResponse;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -28,7 +27,14 @@ public class AuthController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/signup")
-    public AuthResponse signup(@Valid SignupDTO dto){
+    public SignupResponse signup(@Valid SignupDTO dto){
         return service.signup(dto);
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/refreshToken")
+    public RefreshTokenResponse refreshToken(@Valid RefreshTokenDTO dto){
+        return service.refreshToken(dto);
     }
 }

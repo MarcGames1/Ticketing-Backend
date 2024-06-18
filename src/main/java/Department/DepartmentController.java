@@ -29,7 +29,7 @@ public class DepartmentController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Secured(roles = {EmployeeRole.MANAGER})
+    //@Secured(roles = {EmployeeRole.MANAGER})
     public Response create(@Valid CreateDepartmentDTO dto) {
         var id = service.create(dto);
         return Response.status(Response.Status.CREATED)

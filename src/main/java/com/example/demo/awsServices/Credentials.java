@@ -9,11 +9,12 @@ public class Credentials {
     private String region;
     private String email;
     private String bucketName;
-
     private String AWS_ACCESS_KEY_ID;
     private String AWS_SECRET_KEY;
+    private String COGNITO_USER_POOL_ID;
+    private String COGNITO_CLIENT_ID;
+    private String COGNITO_CLIENT_SECRET;
 
-    // Constructor private to prevent direct instanting
     public Credentials() {
         // Load variables from .env
         Dotenv dotenv = Dotenv.load();
@@ -22,7 +23,9 @@ public class Credentials {
         this.bucketName = dotenv.get("AWS_BUCKET_NAME");
         this.AWS_ACCESS_KEY_ID = dotenv.get("AWS_ACCESS_KEY_ID");
         this.AWS_SECRET_KEY = dotenv.get("AWS_SECRET_KEY");
-
+        this.COGNITO_USER_POOL_ID = dotenv.get("COGNITO_USER_POOL_ID");
+        this.COGNITO_CLIENT_ID = dotenv.get("COGNITO_CLIENT_ID");
+        this.COGNITO_CLIENT_SECRET = dotenv.get("COGNITO_CLIENT_SECRET");
         // TODO add more AWS credentials as necessary with getter methods
     }
 
@@ -51,5 +54,17 @@ public class Credentials {
 
     public String getBucketName() {
         return this.bucketName;
+    }
+
+    public String getCognitoUserPoolId() {
+        return COGNITO_USER_POOL_ID;
+    }
+
+    public String getCognitoClientId() {
+        return COGNITO_CLIENT_ID;
+    }
+
+    public String getCognitoClientSecret() {
+        return COGNITO_CLIENT_SECRET;
     }
 }
