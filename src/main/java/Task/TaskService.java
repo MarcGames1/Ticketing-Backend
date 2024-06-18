@@ -11,6 +11,7 @@ import Task.DTO.CreateTaskDTO;
 import Task.DTO.TaskDTO;
 import Task.DTO.UpdateTaskDTO;
 import Utils.CurrentRequestData;
+import com.example.demo.awsServices.Mailer;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -36,6 +37,9 @@ public class TaskService {
     @Inject
     private CurrentRequestData currentRequestData;
 
+    @Inject
+    private Mailer mailer;
+
     public Long create(CreateTaskDTO dto, Long ticketId) {
         var user = entityManager.find(User.class, dto.getUserId());
         if(user == null)
@@ -50,6 +54,11 @@ public class TaskService {
         entityManager.persist(model);
         entityManager.flush();
         entityManager.clear();
+        try{
+            mailer.sendTaskAssignedEmail(model.getUser().getEmail(),model.getTicket().getTitle(), model.getTitle(), model.getDescription());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         return model.getId();
     }
 
@@ -113,6 +122,12 @@ public class TaskService {
         model.setStatus(desiredStatus);
 
         entityManager.merge(model);
+
+        try{
+            mailer.sendTaskStatusChangeEmail(model.getUser().getEmail(),model.getTicket().getTitle(), model.getTitle(), model.getStatus());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void update(UpdateTaskDTO dto) {
@@ -168,5 +183,10 @@ public class TaskService {
         entityManager.merge(model);
         entityManager.flush();
         entityManager.clear();
+        try{
+            mailer.sendTaskAssignedEmail(model.getUser().getEmail(),model.getTicket().getTitle(), model.getTitle(), model.getDescription());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

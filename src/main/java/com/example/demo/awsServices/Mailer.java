@@ -1,4 +1,5 @@
 package com.example.demo.awsServices;
+import Enums.TaskStatus;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
@@ -47,20 +48,27 @@ public class Mailer {
     }
 
     // Status change email method
-    public void sendStatusChangeEmail(String to, String ticketId, String status) {
-        String subject = "Status Update for Ticket " + ticketId;
-        String body = String.format("Hello,\n\nThe status of your ticket %s has been changed to: %s.", ticketId, status);
+    public void sendTicketStatusChangeEmail(String to, String ticketTitle, TaskStatus status) {
+        String subject = "⚡\uFE0F Status Update for Ticket " + ticketTitle + " ⚡\uFE0F";
+        String body = String.format("Hello,\n\nThe status of your ticket '%s' has been changed to: %s.", ticketTitle, status);
 
         sendEmail(to, subject, body);
     }
 
-    // Password Reset ?? OPTIONAL IMPLEMENTATION
-    public void sendPasswordResetCode(String to, String code) {
-        String subject = "Your Password Reset Code";
-        String body = "Your password reset code is: " + code;
+    public void sendTaskStatusChangeEmail(String to, String ticketTitle, String taskTitle,TaskStatus status) {
+        String subject = "⚡\uFE0F Status Update for Task " + taskTitle + " of Ticket " + ticketTitle + " ⚡\uFE0F";
+        String body = String.format("Hello,\n\nThe status of your task '%s' has been changed to: %s.", taskTitle, status);
 
         sendEmail(to, subject, body);
     }
+
+    public void sendTaskAssignedEmail(String to, String ticketTitle, String taskTitle, String content) {
+        String subject = "\uD83D\uDD25 New Assignment for you \uD83D\uDE0E";
+        String body = String.format("Hi\n You have been assigned to a new task.\nTicket: %s\nTask: %s\n%s", ticketTitle, taskTitle, content);
+
+        sendEmail(to, subject, body);
+    }
+
 
     // Add New User
     public void sendNewUserWelcomeEmail(String to, String username) {

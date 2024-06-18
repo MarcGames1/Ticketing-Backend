@@ -11,6 +11,7 @@ import Ticket.DTO.TicketDTO;
 import Ticket.DTO.TicketsByStatus;
 import Ticket.DTO.UpdateTicketDTO;
 import Utils.CurrentRequestData;
+import com.example.demo.awsServices.Mailer;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -35,6 +36,9 @@ public class TicketService {
 
     @Inject
     private CurrentRequestData currentRequestData;
+
+    @Inject
+    private Mailer mailer;
 
     public Long create(CreateTicketDTO dto) {
         Ticket model = TicketMapper.INSTANCE.create(dto);
@@ -134,6 +138,14 @@ public class TicketService {
             model.setStatus(desiredStatus);
         }
         entityManager.merge(model);
+
+        try{
+            for(var task : model.getTasks()){
+                mailer.sendTicketStatusChangeEmail(task.getUser().getEmail(),model.getTitle(), model.getStatus());
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public Long delete(Long id) {
