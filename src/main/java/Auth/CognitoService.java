@@ -8,6 +8,7 @@ import com.auth0.jwt.interfaces.RSAKeyProvider;
 import com.example.demo.awsServices.Credentials;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.json.JSONObject;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -92,10 +93,14 @@ public class CognitoService {
         tokens.put("accessToken", authResponse.authenticationResult().accessToken());
         return tokens;
     }
-
+    private static String decode(String encodedString) {
+        return new String(Base64.getUrlDecoder().decode(encodedString));
+    }
     public Map<String, String> refreshTokens(String accessToken,String refreshToken) {
-        var decodedToken = jwtVerifier.verify(accessToken);
-        var username = decodedToken.getClaim("username").asString();
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+        String[] parts = accessToken.split("\\.");
+        JSONObject payload = new JSONObject(decode(parts[1]));
+        var username = payload.getString("username");
         Map<String, String> authParams = new HashMap<>();
         authParams.put("REFRESH_TOKEN", refreshToken);
         authParams.put("SECRET_HASH", calculateSecretHash(username));
