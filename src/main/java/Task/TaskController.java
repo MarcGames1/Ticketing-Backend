@@ -84,6 +84,7 @@ public class TaskController {
     @POST
     @Path("/{id}/attachments")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Secured(roles = {EmployeeRole.MANAGER, EmployeeRole.SUPERVISOR})
     public Response addAttachment(@PathParam("id") Long taskId,
                                   @PathParam("ticketId") Long ticketId,
                                   @FormDataParam("file") InputStream fileInputStream,
@@ -94,6 +95,7 @@ public class TaskController {
 
     @DELETE
     @Path("/{id}/attachments/{attId}")
+    @Secured(roles = {EmployeeRole.MANAGER, EmployeeRole.SUPERVISOR})
     public Response deleteAttachment(@PathParam("id") Long taskId, @PathParam("attId") Long attachmentId){
         service.removeAttachment(taskId, attachmentId);
         return Response.ok().build();
