@@ -13,7 +13,10 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import java.io.InputStream;
 import java.util.List;
 
 
@@ -75,6 +78,24 @@ public class TaskController {
     @Secured(roles = {EmployeeRole.MANAGER, EmployeeRole.SUPERVISOR})
     public Response assignUserToTask(@PathParam("id") Long taskId, @Valid AssignUserToTaskDTO dto){
         service.assignUserToTask(taskId,dto);
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/{id}/attachments")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response addAttachment(@PathParam("id") Long taskId,
+                                  @PathParam("ticketId") Long ticketId,
+                                  @FormDataParam("file") InputStream fileInputStream,
+                                  @FormDataParam("file") FormDataContentDisposition fileMetaData){
+        service.addAttachment(ticketId, taskId, fileInputStream);
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/{id}/attachments/{attId}")
+    public Response deleteAttachment(@PathParam("id") Long taskId, @PathParam("attId") Long attachmentId){
+        service.removeAttachment(taskId, attachmentId);
         return Response.ok().build();
     }
 }

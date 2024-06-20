@@ -12,6 +12,7 @@ import Task.DTO.TaskDTO;
 import Task.DTO.UpdateTaskDTO;
 import Utils.CurrentRequestData;
 import com.example.demo.awsServices.Mailer;
+import com.example.demo.awsServices.S3Uploader;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,13 +20,16 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotAllowedException;
 import jakarta.ws.rs.NotFoundException;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @ApplicationScoped
 @Transactional
@@ -39,6 +43,9 @@ public class TaskService {
 
     @Inject
     private Mailer mailer;
+
+    @Inject
+    private S3Uploader s3;
 
     public Long create(CreateTaskDTO dto, Long ticketId) {
         var user = entityManager.find(User.class, dto.getUserId());
@@ -187,6 +194,52 @@ public class TaskService {
             mailer.sendTaskAssignedEmail(model.getUser().getEmail(),model.getTicket().getTitle(), model.getTitle(), model.getDescription());
         } catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    public void addAttachment(Long ticketId, Long taskId, InputStream file){
+        QTask qTask = QTask.task;
+        JPAQueryFactory queryBuilder = new JPAQueryFactory(entityManager);
+        var task = queryBuilder.select(qTask)
+                .from(qTask)
+                .where(qTask.id.eq(taskId))
+                .where(qTask.ticket.id.eq(ticketId))
+                .fetchOne();
+        if(task == null)
+            throw new NotFoundException("Task not found");
+        try{
+            String fileId = UUID.randomUUID().toString();
+            var jsonResponse = s3.uploadFile(fileId, file);
+            var attachment = new Attachment(String.valueOf(jsonResponse.get("url")),fileId, task);
+            entityManager.persist(attachment);
+            entityManager.flush();
+            entityManager.clear();
+        } catch (Exception ignored){
+            throw new BadRequestException("Something went wrong");
+        }
+    }
+
+    public void removeAttachment(Long taskId, Long attachmentId){
+        JPAQueryFactory queryBuilder = new JPAQueryFactory(entityManager);
+        var attachment = queryBuilder.select(QAttachment.attachment)
+                .from(QAttachment.attachment)
+                .where(QAttachment.attachment.id.eq(attachmentId))
+                .where(QAttachment.attachment.task.id.eq(taskId))
+                .fetchOne();
+        if(attachment == null)
+            throw new NotFoundException("Attachment not found");
+        try{
+            if(s3.fileExists(attachment.getS3Id())){
+                s3.deleteFile(attachment.getS3Id());
+                queryBuilder.delete(QAttachment.attachment)
+                        .where(QAttachment.attachment.task.id.eq(taskId))
+                        .where(QAttachment.attachment.id.eq(attachmentId))
+                        .execute();
+                entityManager.flush();
+                entityManager.clear();
+            }
+        } catch (Exception ignored){
+            throw new BadRequestException("Something went wrong");
         }
     }
 }

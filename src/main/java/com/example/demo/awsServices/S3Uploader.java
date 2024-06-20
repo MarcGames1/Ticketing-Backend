@@ -71,8 +71,8 @@ public class S3Uploader {
 
 
     // helper method that checks if file exists
-    private Boolean fileExists(String key) {
-        return s3Client.doesBucketExistV2(key);
+    public Boolean fileExists(String key) {
+        return s3Client.doesObjectExist(bucketName, key);
     }
     public String getFileUrl(String key) {
         if( this.fileExists(key)) {

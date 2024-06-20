@@ -12,6 +12,7 @@ import Ticket.DTO.TicketsByStatus;
 import Ticket.DTO.UpdateTicketDTO;
 import Utils.CurrentRequestData;
 import com.example.demo.awsServices.Mailer;
+import com.example.demo.awsServices.S3Uploader;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,13 +20,16 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotAllowedException;
 import jakarta.ws.rs.NotFoundException;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @ApplicationScoped
 @Transactional
@@ -39,6 +43,9 @@ public class TicketService {
 
     @Inject
     private Mailer mailer;
+
+    @Inject
+    private S3Uploader s3;
 
     public Long create(CreateTicketDTO dto) {
         Ticket model = TicketMapper.INSTANCE.create(dto);
@@ -163,5 +170,50 @@ public class TicketService {
         return queryBuilder.delete(ticket)
                 .where(ticket.id.eq(id))
                 .execute();
+    }
+
+    public void addAttachment(Long ticketId, InputStream file){
+        QTicket qTicket = QTicket.ticket;
+        JPAQueryFactory queryBuilder = new JPAQueryFactory(entityManager);
+        var ticket = queryBuilder.select(qTicket)
+                .from(qTicket)
+                .where(qTicket.id.eq(ticketId))
+                .fetchOne();
+        if(ticket == null)
+            throw new NotFoundException("Ticket not found");
+        try{
+            String fileId = UUID.randomUUID().toString();
+            var jsonResponse = s3.uploadFile(fileId, file);
+            var attachment = new Attachment(String.valueOf(jsonResponse.get("url")),fileId, ticket);
+            entityManager.persist(attachment);
+            entityManager.flush();
+            entityManager.clear();
+        } catch (Exception ignored){
+            throw new BadRequestException("Something went wrong");
+        }
+    }
+
+    public void removeAttachment(Long ticketId, Long attachmentId){
+        JPAQueryFactory queryBuilder = new JPAQueryFactory(entityManager);
+        var attachment = queryBuilder.select(QAttachment.attachment)
+                        .from(QAttachment.attachment)
+                        .where(QAttachment.attachment.id.eq(attachmentId))
+                        .where(QAttachment.attachment.ticket.id.eq(ticketId))
+                        .fetchOne();
+        if(attachment == null)
+            throw new NotFoundException("Attachment not found");
+        try{
+            if(s3.fileExists(attachment.getS3Id())){
+                s3.deleteFile(attachment.getS3Id());
+                queryBuilder.delete(QAttachment.attachment)
+                        .where(QAttachment.attachment.ticket.id.eq(ticketId))
+                        .where(QAttachment.attachment.id.eq(attachmentId))
+                        .execute();
+                entityManager.flush();
+                entityManager.clear();
+            }
+        } catch (Exception ignored){
+            throw new BadRequestException("Something went wrong");
+        }
     }
 }

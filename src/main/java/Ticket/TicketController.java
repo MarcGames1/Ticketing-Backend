@@ -12,7 +12,10 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import java.io.InputStream;
 import java.util.List;
 
 
@@ -67,5 +70,25 @@ public class TicketController {
     public Response delete(@PathParam("id") Long id){
         var deletedCount = service.delete(id);
         return Response.ok(deletedCount).build();
+    }
+
+    @POST
+    @Path("/{id}/attachments")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Secured(roles = {EmployeeRole.MANAGER, EmployeeRole.SUPERVISOR})
+    public Response addAttachment(@PathParam("id") Long ticketId,
+                                  @FormDataParam("file") InputStream fileInputStream,
+                                  @FormDataParam("file") FormDataContentDisposition fileMetaData){
+        service.addAttachment(ticketId, fileInputStream);
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/{id}/attachments/{attId}")
+    @Secured(roles = {EmployeeRole.MANAGER, EmployeeRole.SUPERVISOR})
+    public Response deleteAttachment(@PathParam("id") Long ticketId, @PathParam("attId") Long attachmentId){
+        service.removeAttachment(ticketId, attachmentId);
+        return Response.ok().build();
     }
 }

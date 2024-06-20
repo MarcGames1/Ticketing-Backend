@@ -26,10 +26,20 @@ private Long id;
     @JoinColumn(name = "task_id")
     private Task task;
 
+    public Attachment() {
+    }
 
-    // Added s3bucket ID instead of name
-    // TODO add name field if you think is necesary
+    public Attachment(String url, String s3Id, Ticket ticket) {
+        this.url = url;
+        this.s3Id = s3Id;
+        this.ticket = ticket;
+    }
 
+    public Attachment(String url, String s3Id, Task task) {
+        this.url = url;
+        this.s3Id = s3Id;
+        this.task = task;
+    }
 
     public String getUrl() {
         return url;
