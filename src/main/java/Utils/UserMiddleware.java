@@ -4,6 +4,7 @@ import Auth.AuthService;
 import User.UserService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.auth0.jwt.interfaces.RSAKeyProvider;
 import jakarta.inject.Inject;
@@ -60,8 +61,11 @@ public class UserMiddleware implements Filter {
                 }
             } catch (NumberFormatException e) {
                 //e.printStackTrace();
+            } catch (TokenExpiredException e){
+                httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             } catch (Exception ignored){
-
+                ignored.printStackTrace();
             }
         }
 
