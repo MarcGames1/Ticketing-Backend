@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "tickets")
-public class Ticket implements Serializable {
+public class Ticket extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -6,8 +6,8 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "attachments")
-public class Attachment implements Serializable {
-//    TODO Attachment with url and id from s3bucket
+public class Attachment extends BaseEntity implements Serializable {
+
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;

@@ -1,10 +1,7 @@
 package Ticket;
 import Enums.EmployeeRole;
 import Shared.DTO.ChangeStatusDTO;
-import Ticket.DTO.CreateTicketDTO;
-import Ticket.DTO.TicketDTO;
-import Ticket.DTO.TicketsByStatus;
-import Ticket.DTO.UpdateTicketDTO;
+import Ticket.DTO.*;
 import Utils.Secured;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -40,6 +37,12 @@ public class TicketController {
         return Response.status(Response.Status.CREATED)
                 .entity(id)
                 .build();
+    }
+
+    @GET
+    @Path("/report")
+    public List<BasicTicketDTO> getReport(){
+        return service.getLiveReportData();
     }
 
     @GET

@@ -6,13 +6,11 @@ import Enums.TaskStatus;
 import Mapper.TaskStatusMapper;
 import Mapper.TicketMapper;
 import Shared.DTO.ChangeStatusDTO;
-import Ticket.DTO.CreateTicketDTO;
-import Ticket.DTO.TicketDTO;
-import Ticket.DTO.TicketsByStatus;
-import Ticket.DTO.UpdateTicketDTO;
+import Ticket.DTO.*;
 import Utils.CurrentRequestData;
 import com.example.demo.awsServices.Mailer;
 import com.example.demo.awsServices.S3Uploader;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.ejb.Stateless;
@@ -26,6 +24,10 @@ import jakarta.ws.rs.NotAllowedException;
 import jakarta.ws.rs.NotFoundException;
 
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -215,5 +217,22 @@ public class TicketService {
         } catch (Exception ignored){
             throw new BadRequestException("Something went wrong");
         }
+    }
+
+    public List<BasicTicketDTO> getLiveReportData(){
+        JPAQueryFactory queryBuilder = new JPAQueryFactory(entityManager);
+        var qTicket = QTicket.ticket;
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
+
+        BooleanExpression updatedToday = qTicket.updatedAt.between(startOfDay, endOfDay);
+        var tickets =  queryBuilder.select(qTicket)
+                .from(qTicket)
+                .where(updatedToday)
+                .orderBy(qTicket.updatedAt.desc())
+                .fetch();
+
+        return TicketMapper.INSTANCE.getAllBasic(tickets);
     }
 }

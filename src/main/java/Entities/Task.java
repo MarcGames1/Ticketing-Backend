@@ -10,7 +10,7 @@ import java.util.Random;
 
 @Entity
 @Table(name = "tasks")
-public class Task implements Serializable {
+public class Task extends BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
