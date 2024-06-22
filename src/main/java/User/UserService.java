@@ -10,7 +10,7 @@ import User.DTO.FullUserDTO;
 import User.DTO.UpdateUserDTO;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 
-@ApplicationScoped
+@Stateless
 @Transactional
 public class UserService {
     @PersistenceContext

@@ -1,6 +1,7 @@
 package com.example.demo;
 
 
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Path("/test")
+@RequestScoped
 public class TestResource {
     @Inject
     private TestController controller;

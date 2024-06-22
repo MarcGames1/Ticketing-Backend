@@ -28,7 +28,14 @@ public class User implements Serializable {
     @Enumerated(EnumType.ORDINAL)
     private EmployeeRole role;
 
-    protected User () {}
+    public User () {}
+
+    public User(String firstName, String lastName, String email, EmployeeRole role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.role = role;
+    }
 
     public User(Long id, String firstName, String lastName , String email, EmployeeRole role) {
         this.id = id;

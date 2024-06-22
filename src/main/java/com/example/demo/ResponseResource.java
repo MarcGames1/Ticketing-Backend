@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -10,6 +11,7 @@ import jakarta.ws.rs.core.Response;
 import java.util.Collections;
 
 @Path("/evenValue")
+@RequestScoped
 public class ResponseResource {
 
     @GET

@@ -10,7 +10,7 @@ import Entities.QUser;
 import Mapper.DepartmentMapper;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -20,7 +20,7 @@ import jakarta.ws.rs.NotFoundException;
 import java.util.List;
 
 
-@ApplicationScoped
+@Stateless
 @Transactional
 public class DepartmentService {
     @PersistenceContext

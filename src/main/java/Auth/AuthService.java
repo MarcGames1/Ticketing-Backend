@@ -8,7 +8,7 @@ import Enums.EmployeeRole;
 import Mapper.UserMapper;
 import Shared.DTO.AuthResponse;
 import com.querydsl.jpa.impl.JPAQuery;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 
-@ApplicationScoped
+@Stateless
 @Transactional
 public class AuthService {
     @PersistenceContext

@@ -1,5 +1,6 @@
 package com.example.demo.awsServices;
 
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 
 @Path("/uploads")
+@RequestScoped
 public class UploadController {
 
     @Inject

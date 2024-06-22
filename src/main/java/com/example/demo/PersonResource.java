@@ -1,9 +1,11 @@
 package com.example.demo;
 
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 @Path("/person")
+@RequestScoped
 public class PersonResource {
 
     @GET

@@ -4,6 +4,7 @@ import Entities.Attachment;
 import Mapper.AttachmentMapper;
 import com.example.demo.Attachments.DTO.CreateAttachmentDTO;
 import com.example.demo.awsServices.S3Uploader;
+import jakarta.ejb.Stateless;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -11,7 +12,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import java.io.InputStream;
 
-@ApplicationScoped
+@Stateless
 @Transactional
 public class AttachmentService {
     @PersistenceContext

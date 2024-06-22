@@ -15,7 +15,7 @@ import com.example.demo.awsServices.Mailer;
 import com.example.demo.awsServices.S3Uploader;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@ApplicationScoped
+@Stateless
 @Transactional
 public class TicketService {
     public TicketService() {}
