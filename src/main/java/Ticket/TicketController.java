@@ -39,7 +39,7 @@ public class TicketController {
                 .build();
     }
 
-    @GET
+    @POST
     @Path("/report")
     public List<BasicTicketDTO> getReport(){
         return service.getLiveReportData();
