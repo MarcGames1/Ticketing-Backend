@@ -28,7 +28,7 @@ public class DepartmentController {
         return service.getAll();
     }
 
-    @GET
+     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/list")
     public List<BasicDepartmentDTO> getList(){
