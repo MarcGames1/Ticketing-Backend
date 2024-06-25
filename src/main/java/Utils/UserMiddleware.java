@@ -110,9 +110,11 @@ public class UserMiddleware implements Filter {
                 }
                 var claims = data.getClaims();
                 var user = service.getUserByEmail(claims.get("email").asString());
-                if (user != null) {
-                    currentRequestData.setUser(user);
+                if(user == null) {
+                    httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
                 }
+                currentRequestData.setUser(user);
             } catch (NumberFormatException e) {
                 //e.printStackTrace();
             } catch (TokenExpiredException e){
@@ -138,8 +140,9 @@ public class UserMiddleware implements Filter {
 
         // Check if any secured route matches the request path and method
         String finalRequestPath = requestPath;
-        return securedRoutes.stream()
+        var res = securedRoutes.stream()
                 .anyMatch(securedRoute -> securedRoute.getMethod().equals(method) && securedRoute.matches(finalRequestPath));
+        return res;
     }
 
     @Override
